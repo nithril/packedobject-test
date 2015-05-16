@@ -48,15 +48,15 @@ public class PackedObjectBench {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 5, time = 1)
-    @Measurement(iterations = 5, time = 1)
+    @Warmup(iterations = 2, time = 1)
+    @Measurement(iterations = 2, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchSum(ByteBufferState state) {
 
         int value = 0;
 
-        WrappedPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
+        AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
 
         for (int i = 0; i < NB * 16; i+=16) {
             defaultAccessorPoint.setIndex(i);
@@ -69,15 +69,15 @@ public class PackedObjectBench {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 5, time = 1)
-    @Measurement(iterations = 5, time = 1)
+    @Warmup(iterations = 2, time = 1)
+    @Measurement(iterations = 2, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchSum2(ByteBufferState state) {
 
         int value = 0;
 
-        WrappedPackedObject2 defaultAccessorPoint = state.defaultAccessorPoint2;
+        AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint2;
 
         for (int i = 0; i < NB * 16; i += 16) {
             defaultAccessorPoint.setIndex(i);
@@ -90,8 +90,8 @@ public class PackedObjectBench {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 5, time = 1)
-    @Measurement(iterations = 5, time = 1)
+    @Warmup(iterations = 2, time = 1)
+    @Measurement(iterations = 2, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchDefaultSum(ByteBufferState state) {
@@ -111,8 +111,8 @@ public class PackedObjectBench {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 5, time = 1)
-    @Measurement(iterations = 5, time = 1)
+    @Warmup(iterations = 2, time = 1)
+    @Measurement(iterations = 2, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchInline(ByteBufferState state) {

@@ -7,22 +7,9 @@ import java.nio.ByteBuffer;
  */
 public class WrappedPackedObject2 extends AbstractPackedObject implements PackedObject {
 
-    protected int index = 0;
-
-    protected ByteBuffer buffer;
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public void setBuffer(ByteBuffer buffer) {
-        this.buffer = buffer;
-    }
 
     @Override
     public int get() {
-        return buffer.getInt(index+4);
+        return buffer.getInt(index);
     }
-
-
 }
