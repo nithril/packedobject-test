@@ -5,14 +5,11 @@ package com.github.nithril;
  */
 public interface PackedObject {
 
-    int getA();
-    int getB();
-    int getC();
-    int getD();
+    int get();
 
     int sum();
 
     default int defaultSum(){
-        return getA() + getB() + getC() + getD();
+        return get();
     }
 }

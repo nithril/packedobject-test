@@ -7,7 +7,7 @@ public abstract class AbstractPackedObject implements PackedObject {
 
     @Override
     public int sum(){
-        return getA() + getB() + getC() + getD();
+        return get();
     }
 
    /* @Override

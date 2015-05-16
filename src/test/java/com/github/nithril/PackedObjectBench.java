@@ -58,8 +58,8 @@ public class PackedObjectBench {
 
         WrappedPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
 
-        for (int i = 0; i < NB; i++) {
-            defaultAccessorPoint.setIndex(i * 16);
+        for (int i = 0; i < NB * 16; i+=16) {
+            defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.sum();
         }
 
@@ -79,8 +79,8 @@ public class PackedObjectBench {
 
         WrappedPackedObject2 defaultAccessorPoint = state.defaultAccessorPoint2;
 
-        for (int i = 0; i < NB; i++) {
-            defaultAccessorPoint.setIndex(i * 16);
+        for (int i = 0; i < NB * 16; i += 16) {
+            defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.sum();
         }
 
@@ -100,8 +100,8 @@ public class PackedObjectBench {
 
         WrappedPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
 
-        for (int i = 0; i < NB; i++) {
-            defaultAccessorPoint.setIndex(i * 16);
+        for (int i = 0; i < NB * 16; i += 16) {
+            defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.defaultSum();
         }
 
@@ -121,12 +121,8 @@ public class PackedObjectBench {
 
         WrappedPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
 
-        for (int i = 0; i < NB*16; i+=16) {
-            //defaultAccessorPoint.setIndex(i * 16);
-            value += state.byteBuffer.getInt(i  + 0)
-                    + state.byteBuffer.getInt(i  + 4)
-                    + state.byteBuffer.getInt(i  + 8)
-                    + state.byteBuffer.getInt(i  + 12);
+        for (int i = 0; i < NB * 16; i += 16) {
+            value += state.byteBuffer.getInt(i);
         }
 
         return value;

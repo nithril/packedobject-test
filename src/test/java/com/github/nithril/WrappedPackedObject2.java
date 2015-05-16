@@ -20,22 +20,9 @@ public class WrappedPackedObject2 extends AbstractPackedObject implements Packed
     }
 
     @Override
-    public int getA() {
+    public int get() {
         return buffer.getInt(index+4);
     }
 
-    @Override
-    public int getB() {
-        return buffer.getInt(index+0);
-    }
 
-    @Override
-    public int getC() {
-        return buffer.getInt(index+8);
-    }
-
-    @Override
-    public int getD() {
-        return buffer.getInt(index+12);
-    }
 }
