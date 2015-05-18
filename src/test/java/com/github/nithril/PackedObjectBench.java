@@ -8,7 +8,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -18,9 +17,6 @@ public class PackedObjectBench {
 
     public static final int NB = 10000;
 
-    public static final Random RANDOM = new Random();
-
-
     @State(Scope.Benchmark)
     public static class ByteBufferState {
 
@@ -29,13 +25,10 @@ public class PackedObjectBench {
         List<Integer> list;
 
         public ByteBufferState() {
-
             list = new ArrayList<>();
-
             for (int i = 0; i < NB; i++) {
                 list.add(i);
             }
-
             defaultAccessorPoint.setBuffer(list);
             defaultAccessorPoint2.setBuffer(list);
         }
@@ -49,16 +42,12 @@ public class PackedObjectBench {
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchDefaultSum(ByteBufferState state) {
-
         int value = 0;
-
         AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
-
         for (int i = 0; i < NB ; i ++) {
             defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.defaultSum();
         }
-
         return value;
     }
 
@@ -69,18 +58,13 @@ public class PackedObjectBench {
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchSum(ByteBufferState state) {
-
         int value = 0;
-
         AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
-
         for (int i = 0; i < NB ; i ++) {
             defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.sum();
         }
-
         return value;
-
     }
 
     @Benchmark
@@ -90,16 +74,12 @@ public class PackedObjectBench {
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchSum2(ByteBufferState state) {
-
         int value = 0;
-
         AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint2;
-
         for (int i = 0; i < NB ; i ++) {
             defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.sum();
         }
-
         return value;
     }
 
@@ -112,13 +92,10 @@ public class PackedObjectBench {
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
     public int benchInline(ByteBufferState state) {
-
         int value = 0;
-
         for (int i = 0; i < NB ; i ++) {
             value += state.list.get(i);
         }
-
         return value;
     }
 
