@@ -6,8 +6,8 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -26,24 +26,40 @@ public class PackedObjectBench {
 
         WrappedPackedObject defaultAccessorPoint = new WrappedPackedObject();
         WrappedPackedObject2 defaultAccessorPoint2 = new WrappedPackedObject2();
-        ByteBuffer byteBuffer;
+        List<Integer> list;
 
         public ByteBufferState() {
 
-            byteBuffer = ByteBuffer.allocateDirect(NB * 4 * 4).order(ByteOrder.LITTLE_ENDIAN);
+            list = new ArrayList<>();
 
-            defaultAccessorPoint.setBuffer(byteBuffer);
-            defaultAccessorPoint.setIndex(0);
-
-            defaultAccessorPoint2.setBuffer(byteBuffer);
-            defaultAccessorPoint2.setIndex(0);
-
-
-            for (int i = 0; i < NB * 4 * 4; i++) {
-                byteBuffer.put((byte) RANDOM.nextInt());
+            for (int i = 0; i < NB; i++) {
+                list.add(i);
             }
+
+            defaultAccessorPoint.setBuffer(list);
+            defaultAccessorPoint2.setBuffer(list);
         }
 
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Warmup(iterations = 2, time = 1)
+    @Measurement(iterations = 2, time = 1)
+    @OperationsPerInvocation(NB)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public int benchDefaultSum(ByteBufferState state) {
+
+        int value = 0;
+
+        AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
+
+        for (int i = 0; i < NB ; i ++) {
+            defaultAccessorPoint.setIndex(i);
+            value += defaultAccessorPoint.defaultSum();
+        }
+
+        return value;
     }
 
     @Benchmark
@@ -58,7 +74,7 @@ public class PackedObjectBench {
 
         AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
 
-        for (int i = 0; i < NB * 16; i+=16) {
+        for (int i = 0; i < NB ; i ++) {
             defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.sum();
         }
@@ -79,34 +95,14 @@ public class PackedObjectBench {
 
         AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint2;
 
-        for (int i = 0; i < NB * 16; i += 16) {
+        for (int i = 0; i < NB ; i ++) {
             defaultAccessorPoint.setIndex(i);
             value += defaultAccessorPoint.sum();
         }
 
         return value;
-
     }
 
-    @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 2, time = 1)
-    @Measurement(iterations = 2, time = 1)
-    @OperationsPerInvocation(NB)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public int benchDefaultSum(ByteBufferState state) {
-
-        int value = 0;
-
-        WrappedPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
-
-        for (int i = 0; i < NB * 16; i += 16) {
-            defaultAccessorPoint.setIndex(i);
-            value += defaultAccessorPoint.defaultSum();
-        }
-
-        return value;
-    }
 
 
     @Benchmark
@@ -119,10 +115,8 @@ public class PackedObjectBench {
 
         int value = 0;
 
-        WrappedPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
-
-        for (int i = 0; i < NB * 16; i += 16) {
-            value += state.byteBuffer.getInt(i);
+        for (int i = 0; i < NB ; i ++) {
+            value += state.list.get(i);
         }
 
         return value;
@@ -132,7 +126,8 @@ public class PackedObjectBench {
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(PackedObjectBench.class.getSimpleName())
-                .forks(1)
+                        //.addProfiler(LinuxPerfAsmProfiler.class)
+                .forks(0)
                 .build();
 
         new Runner(opt).run();
