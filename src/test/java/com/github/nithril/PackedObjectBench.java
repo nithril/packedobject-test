@@ -1,13 +1,12 @@
 package com.github.nithril;
 
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.profile.LinuxPerfAsmProfiler;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,59 +16,44 @@ public class PackedObjectBench {
 
     public static final int NB = 10000;
 
-    @State(Scope.Benchmark)
-    public static class ByteBufferState {
-
-        WrappedPackedObject defaultAccessorPoint = new WrappedPackedObject();
-        WrappedPackedObject2 defaultAccessorPoint2 = new WrappedPackedObject2();
-        List<Integer> list;
-
-        public ByteBufferState() {
-            list = new ArrayList<>();
-            for (int i = 0; i < NB; i++) {
-                list.add(i);
-            }
-            defaultAccessorPoint.setBuffer(list);
-            defaultAccessorPoint2.setBuffer(list);
-        }
-
-    }
-
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 2, time = 1)
-    @Measurement(iterations = 2, time = 1)
+    @Warmup(iterations = 4, time = 1)
+    @Measurement(iterations = 1, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public int benchDefaultSum(ByteBufferState state) {
+    public int benchDefaultSum() {
         int value = 0;
-        AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
-        for (int i = 0; i < NB ; i ++) {
-            defaultAccessorPoint.setIndex(i);
-            value += defaultAccessorPoint.defaultSum();
+        PackedObject packedObject = Holder.packedObject;
+
+        for (int i = 0; i < NB; i++) {
+            packedObject.setIndex(i);
+            value += packedObject.defaultSum();
         }
         return value;
     }
 
-    @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 2, time = 1)
-    @Measurement(iterations = 2, time = 1)
-    @OperationsPerInvocation(NB)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    public int benchSum(ByteBufferState state) {
-        int value = 0;
-        AbstractPackedObject defaultAccessorPoint = state.defaultAccessorPoint;
-        for (int i = 0; i < NB ; i ++) {
-            defaultAccessorPoint.setIndex(i);
-            value += defaultAccessorPoint.sum();
-        }
-        return value;
-    }
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 2, time = 1)
+    @Warmup(iterations = 4, time = 1)
+    @Measurement(iterations = 1, time = 1)
+    @OperationsPerInvocation(NB)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    public int benchSum() {
+        int value = 0;
+        PackedObject packedObject = Holder.packedObject;
+
+        for (int i = 0; i < NB; i++) {
+            packedObject.setIndex(i);
+            value += packedObject.sum();
+        }
+        return value;
+    }
+/*
+    @Benchmark
+    @BenchmarkMode(Mode.AverageTime)
+    @Warmup(iterations = 10, time = 1)
     @Measurement(iterations = 2, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -87,7 +71,7 @@ public class PackedObjectBench {
 
     @Benchmark
     @BenchmarkMode(Mode.AverageTime)
-    @Warmup(iterations = 2, time = 1)
+    @Warmup(iterations = 10, time = 1)
     @Measurement(iterations = 2, time = 1)
     @OperationsPerInvocation(NB)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -98,13 +82,14 @@ public class PackedObjectBench {
         }
         return value;
     }
-
+*/
 
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(PackedObjectBench.class.getSimpleName())
-                        //.addProfiler(LinuxPerfAsmProfiler.class)
-                .forks(0)
+                .addProfiler(LinuxPerfAsmProfiler.class)
+                .param("jmh.perfasm.saveLog" , "true")
+                .forks(1)
                 .build();
 
         new Runner(opt).run();
